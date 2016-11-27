@@ -1,0 +1,275 @@
+<head>
+	<title>News Project</title>
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<script src="http://www.google.com/uds/solutions/dynamicfeed/gfdynamicfeedcontrol.js"
+	type="text/javascript"></script>
+
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+	<!-- jQuery library -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+	<!-- Latest compiled JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	
+	<script type="text/javascript">
+		var feed;
+		function func(){
+			if(document.getElementById) {
+				var x = document.getElementById('categs').value;
+				if(x == 1){		 //US
+					var url = "http://rss.cnn.com/rss/cnn_us.rss";
+					initialize(url);
+				}
+				else if(x == 2){ //world
+					var url = "http://rss.cnn.com/rss/cnn_world.rss";
+					initialize(url);
+				}
+				else if(x ==3){ //sports
+					var url = "http://espn.go.com/espn/rss/nhl/news";
+					initialize(url);
+				}
+				else if(x ==4){ //weather
+					var url = "https://alerts.weather.gov/cap/ny.php?x=0";
+					initialize(url);
+				}
+				else if(x ==5){ //tech
+					var url = "http://rss.cnn.com/rss/cnn_tech.rss";
+					initialize(url);
+				}
+			}
+		}
+		
+		function initialize(url) {
+		  var feed = new google.feeds.Feed(url);
+		  feed.load(function(result) {
+			if (!result.error) {
+			  var container = document.getElementById("feed");
+			  container.innerHTML = "";
+			  for (var i = 0; i < result.feed.entries.length; i++) {
+				var entry = result.feed.entries[i];
+				var div = document.createElement("div");
+				var a = document.createElement('a');
+				a.setAttribute('href',entry.link);
+				a.setAttribute('target',"_blank");
+				a.innerHTML = entry.title;
+				
+				div.appendChild(a);
+				
+				
+				var element = document.createElement("input");
+			    //Delete 
+			    element.type="button";
+				element.value = "X";
+				element.onclick=function(){document.getElementById('feed').removeChild( this.parentNode );};
+			    div.appendChild(element);
+				
+				
+				var element2 = document.createElement("input");
+			    //Favorite 
+			    element2.type="button";
+				element2.value = "Favorite";
+				element2.onclick=function(){
+					var div2 = document.createElement("div");
+					var a2 = document.createElement('a');
+					a2.setAttribute('href',entry.link);
+					a2.setAttribute('target',"_blank");
+					a2.innerHTML = entry.title;
+					div2.appendChild(a2);
+					var elem = document.createElement("input");
+					//Delete 
+					elem.type="button";
+					elem.value = "X";
+					elem.onclick=function(){document.getElementById('favorites').removeChild( this.parentNode );};
+					div2.appendChild(elem);
+				
+					document.getElementById('favorites').appendChild( div2 );
+				};
+			    div.appendChild(element2);
+				
+				container.appendChild(div);
+				
+				
+			  }
+			}
+		  });
+		}
+		google.load("feeds", "1");
+		google.setOnLoadCallback(load);
+
+		
+
+		//change page without refreshing
+		function toggle_visibility(id1, id2) {
+		   var e1 = document.getElementById(id1);
+		   var e2 = document.getElementById(id2);
+		   
+			  e1.style.display = 'none';
+		   
+			  e2.style.display = 'block';
+	    }
+		
+		function store(){
+			// Name and Password from the register-form
+			var name = document.getElementById('name');
+			var pw = document.getElementById('pw');
+			localStorage.setItem('name', name.value);
+			localStorage.setItem('pw', pw.value);
+			
+			toggle_visibility("register","main");
+		}
+		function login(){
+			// stored data from the register-form
+			var storedName = localStorage.getItem('name');
+			var storedPw = localStorage.getItem('pw');
+
+			// entered data from the login-form
+			var userName = document.getElementById('userName');
+			var userPw = document.getElementById('userPw');
+
+			// check if stored data from register-form is equal to data from login form
+			if(userName.value !== storedName || userPw.value !== storedPw) {
+				alert("Incorrect username or password");
+			}else {
+				toggle_visibility("login","body");
+			}
+		}
+	</script>
+</head>
+
+<body>
+	<script>
+	//use cookie to get time
+			var days = 730; // days until cookie expires = 2 years.
+			var lastvisit=new Object();
+			var firstvisitmsg="This is your first visit to this page. Welcome!"; 
+			lastvisit.subsequentvisitmsg="Welcome back visitor! Your last visit was on <b>[displaydate]</b>";
+
+			lastvisit.getCookie=function(Name){ 
+				var re=new RegExp(Name+"=[^;]+", "i"); 
+				if (document.cookie.match(re)) 
+				return document.cookie.match(re)[0].split("=")[1];
+				return''; 
+			}
+
+			lastvisit.setCookie=function(name, value, days){ 
+			var expireDate = new Date();
+
+			var expstring=expireDate.setDate(expireDate.getDate()+parseInt(days));
+			document.cookie = name+"="+value+"; expires="+expireDate.toGMTString()+"; path=/";
+			}
+
+			lastvisit.showmessage = function() {
+			var wh = new Date();
+			if (lastvisit.getCookie("visitc") == "") { 
+				lastvisit.setCookie("visitc", wh, days); 
+				document.write(firstvisitmsg);
+			}
+
+			else {
+				var lv = lastvisit.getCookie("visitc");
+				var lvp = Date.parse(lv);
+				var now = new Date();
+				now.setTime(lvp);
+				var dd = now.getDate();
+				
+				var mn = now.getMonth() + 1;
+				
+				yy = now.getFullYear();
+				var hh = now.getHours();
+				var ampm = "AM";
+				
+				var mins = now.getMinutes();
+				if (mins < 10) {
+					mins = "0"+ mins;
+				}
+				
+				var secs = now.getSeconds();
+				if (secs < 10) {
+					secs = "0" + secs;
+				}
+				var dispDate = mn + "-" + dd + "-" + yy + " " + hh + ":" + mins + ":" + secs;
+				document.write(lastvisit.subsequentvisitmsg.replace("\[displaydate\]", dispDate))
+			}
+
+			lastvisit.setCookie("visitc", wh, days);
+
+			}
+
+			lastvisit.showmessage();
+	</script>
+
+	<div class = "container">
+		<div id="main" style="display: block;" class="jumbotron">
+			<h1 style="text-align:center"><span>News Project</span></h1><br/><br/>
+			<div style="text-align:center;">
+				<button onclick=toggle_visibility("main","login") type="button" class="btn btn-primary">Login</button>
+				<br/><br/>
+				<button onclick=toggle_visibility("main","register") type="button" class="btn btn-primary">Register</button> 
+			</div>
+		</div>
+		
+		<div id="register" style="display: none;" class="jumbotron">
+			<h1 style="text-align:center"><span>Register</span></h1><br/><br/>
+			<div style="text-align:center;">
+				<form id="register-form"> 
+					<input id="name" type="text" placeholder="Name" value=""/><br/><br/>
+					<input id="pw" type="password" placeholder="Password" value=""/><br/><br/>
+					<button onclick=store() type="button" class="btn btn-primary">Register</button><br/><br/>
+					<button onclick=toggle_visibility("register","main") type="button" class="btn btn-primary">Cancel</button>				
+				</form>
+			</div>
+		</div>
+		
+		<div id="login" style="display: none;" class="jumbotron">
+			<h1 style="text-align:center"><span>Login</span></h1><br/><br/>
+			<div style="text-align:center;">
+				<form id="login-form"> 
+					<input id="userName" type="text" placeholder="Enter Username" value=""/><br/><br/>
+					<input id="userPw" type="password" placeholder="Enter Password" value=""/><br/><br/>
+					<button onclick=login() type="button" class="btn btn-primary">Login</button><br/><br/>
+					<button onclick=toggle_visibility("login","main") type="button" class="btn btn-primary">Cancel</button>
+			   </form>
+		   </div>
+		</div>
+
+		<div id="body" style="display: none; text-align:center;" class="jumbotron">
+
+			<h1 style="text-align:center"><span>News</span></h1>
+			<div class="row-fluid">
+				<button onclick=toggle_visibility("body","main") type="button" class="btn btn-primary">Logout</button>
+				<button onclick=toggle_visibility("body","fav") type="button" class="btn btn-primary">Favorites</button>
+			</div>
+			<p id="whichFeed"><small>First Choose a News Feed</small></p>
+
+			<div id="outdetails"><div id="details"><p>Click on a News item's headline.</p></div></div>
+				<p id="catp">
+					<select id="categs" onchange="func()">
+					  <option value="" selected="selected">Choose Feed</option>
+					  <option value="1">US News</option>
+					  <option value="2">World News</option>
+					  <option value="3">Sports</option>
+					  <option value="4">Weather</option>
+					  <option value="5">Technology</option>
+					</select>
+				</p>
+
+		  
+		  <div id="feed"></div>
+			  
+		</div>
+		
+		<div id="fav" style="display: none; text-align:center;" class="jumbotron">
+			<h1 style="text-align:center"><span>Favorites</span></h1>
+			<div class="row-fluid">
+				<button onclick=toggle_visibility("fav","main") type="button" class="btn btn-primary">Logout</button>
+				<button onclick=toggle_visibility("fav","body") type="button" class="btn btn-primary">Feeds</button>
+			</div>
+			
+			<div id="favorites"></div>
+			  
+		</div>
+	</div>		
+	
+</body>
